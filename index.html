@@ -60,8 +60,27 @@
     nav{display:flex;gap:18px;align-items:center}
     .search{display:flex;align-items:center;gap:8px;background:var(--glass);padding:8px 12px;border-radius:12px;min-width:260px}
     .search input{background:transparent;border:0;outline:0;color:inherit;width:100%}
-    main{padding:24px 32px}
-    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin:18px 0}
+    main{padding:12px 32px}
+    .hero {
+  display: grid;
+  grid-template-columns: 4fr 1fr; /* 80% и 20% */
+  gap: 28px;
+  align-items: start; /* чтобы карточки выравнивались по верху */
+  margin: 18px auto;
+  max-width: 1000px;
+}
+
+.hero-left {
+  /* дополнительные стили для левой карточки при необходимости */
+}
+
+.hero-right {
+  background: var(--card);
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
     .hero-card{background:var(--card);padding:28px;border-radius:18px;box-shadow:var(--shadow)}
     .kicker{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
     .headline{font-size:34px;line-height:1.02;margin:0 0 12px}
@@ -142,33 +161,7 @@
           <div style="font-size:12px;color:var(--muted)">Деликатные товары для взрослых • Конфиденциальная доставка</div>
         </div>
       </div>
-      <nav>
-        <div class="search" role="search">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <input id="q" placeholder="Поиск: вибраторы, смазки, белье..." aria-label="Поиск товаров" />
-        </div>
-        <button class="pill" id="wishlistBtn">Избранное</button>
-        <button class="pill" id="cartBtn">Корзина</button>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div class="hero-card">
-          <div class="kicker">Новый</div>
-          <h2 class="headline">Качественные товары с деликатной подачей</h2>
-          <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция. Курьерская или почтовая доставка.</p>
-          <div style="display:flex;gap:12px">
-            <a class="cta" href="catalog.html">К каталогу</a>
-            <button class="cta secondary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Связаться с нами</button>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
-            <div class="pill">Доставка по Украине</div>
-            <div class="pill">Анонимная упаковка</div>
-          </div>
-        </div>
-
-        <aside class="hero-aside">
+	        <aside class="hero-aside">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <strong>Быстрые фильтры</strong>
             <small style="color:var(--muted)">Подберите быстро</small>
@@ -180,7 +173,34 @@
             <button class="pill" onclick="applyFilter('couples')">Для пар</button>
           </div>
         </aside>
-      </section>
+    </header>
+
+    <main>
+      <section class="hero">
+  <!-- Левая большая карточка -->
+  <div class="hero-card hero-left">
+    <div class="kicker">Новый</div>
+    <h2 class="headline">Качественные товары с деликатной подачей</h2>
+    <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция. Курьерская или почтовая доставка.</p>
+    <div style="display:flex;gap:12px">
+      <a class="cta" href="catalog.html">К каталогу</a>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
+      <div class="pill">Доставка по Украине</div>
+      <div class="pill">Анонимная упаковка</div>
+    </div>
+  </div>
+
+  <!-- Правая маленькая карточка -->
+  <div class="hero-card hero-right">
+    <div class="kicker">Скидка</div>
+    <h3 class="headline" style="font-size:24px">Только сегодня!</h3>
+    <p class="lead">Специальные предложения на ограниченный ассортимент товаров.</p>
+    <div style="display:flex;gap:12px">
+      <a class="cta secondary" href="catalog.html">Смотреть</a>
+    </div>
+  </div>
+</section>
 
   <main>
     <section id="catalog">
@@ -217,7 +237,6 @@
         <div style="display:flex;gap:12px;margin-top:18px">
           <div class="price" id="modal-price"></div>
           <div style="margin-left:auto;display:flex;gap:8px">
-            <button class="btn" id="modalAdd">В корзину</button>
             <button class="btn ghost" id="modalWishlist">♡ Избранное</button>
           </div>
         </div>
@@ -235,6 +254,15 @@
   <a href="mailto:developerdeza@gmail.com" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Email</a>
 </section>
 
+<script>
+// Функция для применения фильтра по категории
+function applyFilter(category){
+  renderProducts(category); // передаем категорию в renderProducts
+}
+
+// Если захочешь добавить поиск по тексту
+document.getElementById('q')?.addEventListener('input', () => renderProducts());
+</script>
 
 <script>
 const products = [
