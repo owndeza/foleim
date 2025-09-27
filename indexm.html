@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Velvet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+:root{
+  --bg:#0f0f0f; --card:#1a1a1a; --muted:#cccccc; --accent:#ffffff; --accent-text:#0f0f0f; --glass: rgba(255,255,255,0.08);
+  --radius:14px; --shadow:0 6px 30px rgba(0,0,0,0.6);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;background:var(--bg);color:#fff;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+#site.blurred{filter:blur(6px) brightness(.6);pointer-events:none;user-select:none;}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:16px;}
+.brand{display:flex;gap:8px;align-items:center;}
+.logo{width:40px;height:40px;border-radius:10px;background:var(--accent);display:grid;place-items:center;font-weight:700;color:var(--accent-text);box-shadow:0 6px 18px rgba(0,0,0,0.18);}
+.brand h1{margin:0;font-size:16px;}
+nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.search{display:flex;align-items:center;gap:6px;background:var(--glass);padding:6px 8px;border-radius:12px;flex:1;min-width:140px;}
+.search input{background:transparent;border:0;outline:0;color:inherit;width:100%;}
+
+main{padding:16px;}
+.hero{display:flex;flex-direction:column;gap:16px;margin:12px 0;}
+.hero-card{background:var(--card);padding:16px;border-radius:16px;box-shadow:var(--shadow);}
+.kicker{font-size:12px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.headline{font-size:22px;line-height:1.2;margin:0 0 8px;}
+.lead{color:var(--muted);margin-bottom:12px;}
+.cta{display:inline-flex;align-items:center;background:var(--accent);color:var(--accent-text);padding:10px 14px;border-radius:10px;font-weight:600;gap:8px;box-shadow:0 6px 20px rgba(255,255,255,0.12);}
+.cta.secondary{background:var(--accent);color:var(--accent-text);border:0;}
+.hero-aside{background:var(--card);padding:12px;border-radius:12px;display:flex;flex-wrap:wrap;gap:8px;}
+.pill{display:inline-block;background:var(--accent);padding:6px 10px;border-radius:999px;color:var(--accent-text);font-size:12px;font-weight:600;cursor:pointer;border:0;}
+
+.filters{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap;}
+.filters select,.filters button{background:var(--accent);border:0;padding:8px 10px;border-radius:10px;color:var(--accent-text);font-weight:600;font-size:14px;cursor:pointer;}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;}
+.card{background:var(--card);padding:10px;border-radius:12px;box-shadow:var(--shadow);transition:transform .18s ease;}
+.card:hover{transform:translateY(-4px);}
+.img{height:120px;border-radius:10px;background:#2a2a2a;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600;}
+.product-title{margin:6px 0 4px;font-weight:600;font-size:14px;}
+.price{font-weight:700;font-size:14px;}
+.meta{color:var(--muted);font-size:12px;}
+.actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.btn{flex:1;padding:8px;border-radius:8px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;font-size:14px;cursor:pointer;}
+.btn.ghost{background:var(--accent);color:var(--accent-text);border:0;}
+
+footer{margin-top:16px;padding:16px;border-radius:12px;background:var(--card);display:flex;flex-direction:column;gap:8px;align-items:center;}
+
+/* modal mobile bottom sheet */
+.modal{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:80;transform:translateY(100%);transition:transform .3s ease;}
+.modal.open{transform:translateY(0);}
+.modal .panel{width:100%;max-width:480px;background:var(--card);border-radius:16px 16px 0 0;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow:auto;}
+.modal .panel .img{height:200px;}
+.close{align-self:flex-end;background:var(--accent);color:var(--accent-text);border:0;padding:6px 10px;border-radius:6px;font-weight:700;cursor:pointer;}
+
+/* age gate */
+.agegate{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.95);z-index:200;}
+.agegate .box{background:var(--card);padding:20px;border-radius:12px;text-align:center;max-width:360px;color:#fff;box-shadow:var(--shadow);}
+.agegate button{margin:6px;padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- Age verification overlay -->
+<div id="agegate" class="agegate" aria-hidden="false">
+  <div class="box">
+    <h2>Подтвердите возраст</h2>
+    <p style="color:var(--muted)">Сайт для взрослых. Вам должно быть 18+.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+      <button id="acceptBtn">Мне 18+</button>
+      <button id="declineBtn">Покинуть сайт</button>
+    </div>
+  </div>
+</div>
+
+<div id="site">
+<header>
+  <div class="brand">
+    <div>
+      <h1>Velvet</h1>
+      <div style="font-size:10px;color:var(--muted)">Деликатные товары • Конфиденциальная доставка</div>
+    </div>
+  </div>
+  <nav>
+    <div class="search" role="search"><input id="q" placeholder="Поиск..." /></div>
+    <button class="pill" id="wishlistBtn">Избранное</button>
+    <button class="pill" id="cartBtn">Корзина</button>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-card">
+    <div class="kicker">Новый</div>
+    <h2 class="headline">Качественные товары с деликатной подачей</h2>
+    <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="cta" href="catalog.html">К каталогу</a>
+      <button class="cta secondary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Связаться</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;">
+      <div class="pill">Доставка по Украине</div>
+      <div class="pill">Анонимная упаковка</div>
+    </div>
+  </div>
+
+  <aside class="hero-aside">
+    <strong>Быстрые фильтры</strong>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+      <button class="pill" onclick="applyFilter('vibrators')">Вибраторы</button>
+      <button class="pill" onclick="applyFilter('lube')">Смазки</button>
+      <button class="pill" onclick="applyFilter('lingerie')">Белье</button>
+      <button class="pill" onclick="applyFilter('couples')">Для пар</button>
+    </div>
+  </aside>
+</section>
+
+<section id="catalog">
+  <div class="filters">
+    <select id="sort" onchange="renderProducts()">
+      <option value="popular">Популярные</option>
+      <option value="new">Новые</option>
+      <option value="price-asc">Цена ↑</option>
+      <option value="price-desc">Цена ↓</option>
+    </select>
+    <div style="margin-left:auto;color:var(--muted)">Показано <span id="count">0</span> товаров</div>
+  </div>
+  <div id="grid" class="grid" aria-live="polite"></div>
+</section>
+</main>
+</div>
+
+<!-- Mobile modal -->
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="panel">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div class="img" id="modal-img"></div>
+    <h3 id="modal-title"></h3>
+    <div id="modal-meta" class="meta"></div>
+    <p id="modal-desc" style="color:var(--muted)"></p>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <div class="price" id="modal-price"></div>
+      <button class="btn" id="modalAdd">В корзину</button>
+      <button class="btn ghost" id="modalWishlist">♡ Избранное</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [
+  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов',desc:'Водонепроницаемый, 8 режимов, USB.',image:'images/v1.jpg'},
+  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная',desc:'Подходит с игрушками и презервативами.',image:'images/c1.jpg'},
+  {id:3,title:'Lace Whisper — Белье',category:'lingerie',price:59,short:'Эластичный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'}
+];
+
+const grid = document.getElementById('grid');
+const count = document.getElementById('count');
+const modal = document.getElementById('modal');
+let currentProductId = null;
+let wishlist = new Set(JSON.parse(localStorage.getItem('wishlist')||'[]'));
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+
+function saveState(){ localStorage.setItem('wishlist',JSON.stringify([...wishlist])); localStorage.setItem('cart',JSON.stringify(cart)); }
+
+function renderProducts(filter){
+  const q = (document.getElementById('q')?.value||'').toLowerCase();
+  const sort = document.getElementById('sort')?.value;
+  let list = products.slice();
+  if(filter) list = list.filter(p=>p.category===filter);
+  if(q) list = list.filter(p=>p.title.toLowerCase().includes(q)||p.short.toLowerCase().includes(q));
+  grid.innerHTML='';
+  list.forEach(p=>{
+    const el = document.createElement('article'); el.className='card';
+    el.innerHTML=`
+      <div class="img"><img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"></div>
+      <div class="product-title">${p.title}</div>
+      <div class="meta">${p.short}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px"><div class="price">${p.price}$</div></div>
+      <div class="actions">
+        <button class="btn" onclick="openModal(${p.id})">Быстрый просмотр</button>
+        <button class="btn ghost" onclick="toggleWishlist(${p.id})">${wishlist.has(p.id)?'♥ В избранном':'♡'}</button>
+      </div>
+    `;
+    grid.appendChild(el);
+  });
+  count.textContent=list.length;
+}
+
+function openModal(id){
+  const p = products.find(x=>x.id===id); if(!p) return;
+  currentProductId=id;
+  document.getElementById('modal-title').textContent=p.title;
+  document.getElementById('modal-meta').textContent=p.short + ' • ' + p.category;
+  document.getElementById('modal-desc').textContent=p.desc;
+  document.getElementById('modal-price').textContent=p.price+'$';
+  document.getElementById('modal-img').innerHTML=`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`;
+  document.getElementById('modalAdd').onclick=()=>addToCart(currentProductId);
+  document.getElementById('modalWishlist').onclick=()=>toggleWishlist(currentProductId);
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
+
+function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); currentProductId=null; }
+function addToCart(id){ if(!id) id=currentProductId; if(!id) return; cart.push(id); saveState(); }
+function toggleWishlist(id){ if(!id) return; if(wishlist.has(id)) wishlist.delete(id); else wishlist.add(id); saveState(); renderProducts(); }
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('site').classList.add('blurred');
+  document.getElementById('agegate').style.display='grid';
+  renderProducts();
+});
+
+document.getElementById('acceptBtn').onclick=()=>{ document.getElementById('site').classList.remove('blurred'); document.getElementById('agegate').style.display='none'; }
+document.getElementById('declineBtn').onclick=()=>{ window.location.href='https://www.google.com'; }
+
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+</script>
+</body>
+</html>
