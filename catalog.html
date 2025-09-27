@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Catalog — Velvet</title>
+<style>
+body{background:#0f0f0f;color:#fff;font-family:sans-serif;margin:0;padding:0;display:flex;}
+main{flex:1;padding:20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;}
+.card{background:#1a1a1a;padding:12px;border-radius:12px;}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:10px;}
+.card .title{font-weight:600;margin:6px 0;}
+.card .price{font-weight:700;}
+.sidebar{width:360px;background:#1a1a1a;padding:20px;overflow:auto;position:sticky;top:0;height:100vh;}
+.btn{padding:8px 12px;border-radius:10px;border:0;background:#fff;color:#0f0f0f;font-weight:600;cursor:pointer;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<main>
+  <h1>Каталог товаров</h1>
+  <div class="grid" id="productGrid"></div>
+</main>
+
+<aside class="sidebar">
+  <h2>Корзина</h2>
+  <div id="cartList"></div>
+  <div id="cartTotal" style="margin-top:12px;font-weight:700"></div>
+  <button class="btn" onclick="goConfirm()">Оформить заказ</button>
+</aside>
+
+<script>
+const products = [
+  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов, силикон medical-grade',desc:'Водонепроницаемый, 8 режимов, зарядка USB.',image:'images/v1.jpg'},
+  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная, на водной основе',desc:'Подходит для использования с игрушками и презервативами.',image:'images/c1.jpg'},
+  {id:3,title:'Lace Whisper — Комплект белья',category:'lingerie',price:59,short:'Эластичный, нежный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'},
+  {id:4,title:'Together Set — Для пар',category:'couples',price:89,short:'Игры для пары, 3 аксессуара',desc:'Идеально для исследования близости вместе.',image:'images/bdsm1.jpg'},
+  {id:5,title:'Mini Pulse — Мини-вибратор',category:'vibrators',price:39,short:'Компактный, тихий',desc:'Прекрасно для путешествий.',image:'images/v2.jpg'},
+  {id:6,title:'BunnyHop — Вибратор-кролик',category:'vibrators',price:149,short:'Двойная стимуляция',desc:'Мощные моторчики для точки G и клитора.',image:'images/v3.jpg'},
+  {id:7,title:'Crystal Dildo — Стеклянный',category:'dildos',price:49,short:'Эстетика и твёрдость',desc:'Можно нагревать или охлаждать для новых ощущений.',image:'images/d1.jpg'},
+  {id:8,title:'Leather Erotic Gear Set',category:'bdsm',price:79,short:'Набор аксессуаров из кожи',desc:'Плётка, маска, наручники и другое.',image:'images/bdsm2.jpg'},
+  {id:9,title:'Stemless — Анальные бусы',category:'anal',price:29,short:'Мягкий силикон, тройные шарики',desc:'Удобно снимать и мыть.',image:'images/bysu1.jpg'},
+  {id:10,title:'Desire Boost — Возбуждающий спрей',category:'cosmetics',price:25,short:'Для женщин и мужчин',desc:'Быстрый эффект, приятный аромат.',image:'images/spray.jpg'}
+];
+
+localStorage.setItem('products',JSON.stringify(products));
+
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+
+function renderProducts(){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  products.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='card';
+    el.innerHTML = `
+      <img src="${p.image}" alt="${p.title}">
+      <div class="title">${p.title}</div>
+      <div class="price">${p.price}$</div>
+      <button class="btn" onclick="addToCart(${p.id})">Добавить в корзину</button>
+    `;
+    grid.appendChild(el);
+  });
+}
+
+function renderCart(){
+  const list = document.getElementById('cartList');
+  const totalEl = document.getElementById('cartTotal');
+  list.innerHTML = '';
+  let total = 0;
+  cart.forEach(id=>{
+    const p = products.find(x=>x.id===id);
+    if(p){
+      total += p.price;
+      list.innerHTML += `<div>${p.title} — ${p.price}$</div>`;
+    }
+  });
+  totalEl.textContent = 'Итого: '+total+'$';
+}
+
+function addToCart(id){
+  cart.push(id);
+  localStorage.setItem('cart',JSON.stringify(cart));
+  renderCart();
+}
+
+function goConfirm(){
+  window.location.href = 'confirim.html';
+}
+
+renderProducts();
+renderCart();
+</script>
+
+</body>
+</html>
