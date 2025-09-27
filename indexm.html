@@ -85,9 +85,7 @@ footer{margin-top:16px;padding:16px;border-radius:12px;background:var(--card);di
     </div>
   </div>
   <nav>
-    <div class="search" role="search"><input id="q" placeholder="Поиск..." /></div>
-    <button class="pill" id="wishlistBtn">Избранное</button>
-    <button class="pill" id="cartBtn">Корзина</button>
+
   </nav>
 </header>
 
@@ -99,7 +97,6 @@ footer{margin-top:16px;padding:16px;border-radius:12px;background:var(--card);di
     <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <a class="cta" href="catalog.html">К каталогу</a>
-      <button class="cta secondary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Связаться</button>
     </div>
     <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;">
       <div class="pill">Доставка по Украине</div>
@@ -120,13 +117,9 @@ footer{margin-top:16px;padding:16px;border-radius:12px;background:var(--card);di
 
 <section id="catalog">
   <div class="filters">
-    <select id="sort" onchange="renderProducts()">
-      <option value="popular">Популярные</option>
-      <option value="new">Новые</option>
-      <option value="price-asc">Цена ↑</option>
-      <option value="price-desc">Цена ↓</option>
+
     </select>
-    <div style="margin-left:auto;color:var(--muted)">Показано <span id="count">0</span> товаров</div>
+    <div style="color:var(--muted)">Показано <span id="count">0</span> товаров</div>
   </div>
   <div id="grid" class="grid" aria-live="polite"></div>
 </section>
@@ -143,17 +136,33 @@ footer{margin-top:16px;padding:16px;border-radius:12px;background:var(--card);di
     <p id="modal-desc" style="color:var(--muted)"></p>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
       <div class="price" id="modal-price"></div>
-      <button class="btn" id="modalAdd">В корзину</button>
       <button class="btn ghost" id="modalWishlist">♡ Избранное</button>
     </div>
   </div>
 </div>
 
 <script>
+// Функция для применения фильтра по категории
+function applyFilter(category){
+  renderProducts(category); // передаем категорию в renderProducts
+}
+
+// Если захочешь добавить поиск по тексту
+document.getElementById('q')?.addEventListener('input', () => renderProducts());
+</script>
+
+<script>
 const products = [
-  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов',desc:'Водонепроницаемый, 8 режимов, USB.',image:'images/v1.jpg'},
-  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная',desc:'Подходит с игрушками и презервативами.',image:'images/c1.jpg'},
-  {id:3,title:'Lace Whisper — Белье',category:'lingerie',price:59,short:'Эластичный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'}
+  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов, силикон medical-grade',desc:'Водонепроницаемый, 8 режимов, зарядка USB.',image:'images/v1.jpg'},
+  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная, на водной основе',desc:'Подходит для использования с игрушками и презервативами.',image:'images/c1.jpg'},
+  {id:3,title:'Lace Whisper — Комплект белья',category:'lingerie',price:59,short:'Эластичный, нежный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'},
+  {id:4,title:'Together Set — Для пар',category:'couples',price:89,short:'Игры для пары, 3 аксессуара',desc:'Идеально для исследования близости вместе.',image:'images/bdsm1.jpg'},
+  {id:5,title:'Mini Pulse — Мини-вибратор',category:'vibrators',price:39,short:'Компактный, тихий',desc:'Прекрасно для путешествий.',image:'images/v2.jpg'},
+  {id:6,title:'BunnyHop — Вибратор-кролик',category:'vibrators',price:149,short:'Двойная стимуляция',desc:'Мощные моторчики для точки G и клитора.',image:'images/v3.jpg'},
+  {id:7,title:'Crystal Dildo — Стеклянный',category:'dildos',price:49,short:'Эстетика и твёрдость',desc:'Можно нагревать или охлаждать для новых ощущений.',image:'images/d1.jpg'},
+  {id:8,title:'Leather Erotic Gear Set',category:'bdsm',price:79,short:'Набор аксессуаров из кожи',desc:'Плётка, маска, наручники и другое.',image:'images/bdsm2.jpg'},
+  {id:9,title:'Stemless — Анальные бусы',category:'anal',price:29,short:'Мягкий силикон, тройные шарики',desc:'Удобно снимать и мыть.',image:'images/bysu1.jpg'},
+  {id:10,title:'Desire Boost — Возбуждающий спрей',category:'cosmetics',price:25,short:'Для женщин и мужчин',desc:'Быстрый эффект, приятный аромат.',image:'images/spray.jpg'}
 ];
 
 const grid = document.getElementById('grid');
@@ -200,6 +209,20 @@ function openModal(id){
   document.getElementById('modalAdd').onclick=()=>addToCart(currentProductId);
   document.getElementById('modalWishlist').onclick=()=>toggleWishlist(currentProductId);
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
+
+function openModal(id){
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  currentProductId = id;
+  document.getElementById('modal-title').textContent = p.title;
+  document.getElementById('modal-meta').textContent = p.short + ' • ' + p.category;
+  document.getElementById('modal-desc').textContent = p.desc;
+  document.getElementById('modal-price').textContent = p.price+'$';
+  document.getElementById('modal-img').innerHTML = `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`;
+  document.getElementById('modalWishlist').onclick = () => toggleWishlist(currentProductId);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
 }
 
 function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); currentProductId=null; }
