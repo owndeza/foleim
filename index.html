@@ -1,726 +1,322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amoral Killers</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Velvet</title>
+  <meta name="description" content="Современный и деликатный сексшоп — товары для взрослых, конфиденциальная доставка, консультации." />
+  <style>
+    :root{
+      --bg:#0f0f0f; --card:#1a1a1a; --muted:#cccccc; --accent:#ffffff; --accent-text:#0f0f0f; --glass: rgba(255,255,255,0.08);
+      --radius:14px; --shadow: 0 6px 30px rgba(0,0,0,0.6);
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:#ffffff;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
 
-        body {
-            font-family: 'Segoe UI', Roboto, 'Material Icons', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            line-height: 1.6;
-            position: relative;
-            overflow-x: hidden;
-        }
+    /* blurred state while agegate active */
+    #site.blurred{filter:blur(6px) brightness(.6);pointer-events:none;user-select:none}
 
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            opacity: 0.1;
-        }
+    #site.blurred {
+  filter: blur(6px) brightness(.6);
+  pointer-events: none; /* только сайт, agegate поверх */
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+.agegate {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.95);
+  z-index: 999; /* выше сайта */
+}
+.agegate .box button {
+  pointer-events: auto; /* чтобы кнопки работали */
+}
 
-        /* Header */
-        header {
-            background-color: #1e1e1e;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #333;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:48px;height:48px;border-radius:12px;background:var(--accent);display:grid;place-items:center;font-weight:700;color:var(--accent-text);box-shadow:0 6px 18px rgba(0,0,0,0.18)}
+    .brand h1{margin:0;font-size:18px;letter-spacing:0.2px}
+    nav{display:flex;gap:18px;align-items:center}
+    .search{display:flex;align-items:center;gap:8px;background:var(--glass);padding:8px 12px;border-radius:12px;min-width:260px}
+    .search input{background:transparent;border:0;outline:0;color:inherit;width:100%}
+    main{padding:24px 32px}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin:18px 0}
+    .hero-card{background:var(--card);padding:28px;border-radius:18px;box-shadow:var(--shadow)}
+    .kicker{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .headline{font-size:34px;line-height:1.02;margin:0 0 12px}
+    .lead{color:var(--muted);margin-bottom:18px}
+    .cta{display:inline-flex;align-items:center;background:var(--accent);color:var(--accent-text);padding:12px 18px;border-radius:12px;font-weight:600;gap:10px;box-shadow:0 8px 30px rgba(255,255,255,0.12)}
+    .cta.secondary{background:var(--accent);color:var(--accent-text);border:0}
+    .hero-aside{background:var(--card);padding:18px;border-radius:12px}
+    .pill{display:inline-block;background:var(--accent);padding:8px 12px;border-radius:999px;color:var(--accent-text);font-size:13px;font-weight:600;cursor:pointer;border:0}
 
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
+    /* products grid */
+    .filters{display:flex;gap:12px;align-items:center;margin:18px 0}
+    .filters select,.filters button{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:var(--accent-text);font-weight:600;cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+    .card{background:var(--card);padding:14px;border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease}
+    .card:hover{transform:translateY(-6px)}
+    .img{height:160px;border-radius:10px;background:#2a2a2a;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600}
+    .product-title{margin:10px 0 6px;font-weight:600}
+    .price{font-weight:700}
+    .meta{color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .btn{flex:1;padding:10px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;cursor:pointer}
+    .btn.ghost{background:var(--accent);color:var(--accent-text);border:0}
 
-        .logo:hover {
-            transform: scale(1.05);
-            text-shadow: 0 0 15px rgba(255,255,255,0.5);
-        }
+    /* footer */
+    footer{margin-top:28px;padding:28px;border-radius:12px;background:var(--card);display:flex;justify-content:space-between;align-items:center}
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:80}
+    .modal.open{display:flex}
+    .modal .panel{width:min(920px,96%);background:var(--card);padding:20px;border-radius:12px;display:grid;grid-template-columns:420px 1fr;gap:18px}
+    .close{background:var(--accent);color:var(--accent-text);border:0;padding:6px 10px;border-radius:6px;font-weight:700;cursor:pointer}
 
-        .nav-links a {
-            color: #ffffff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            position: relative;
-        }
+    /* cart panel */
+    #cartPanel{position:fixed;right:-420px;top:0;height:100vh;width:360px;background:var(--card);box-shadow:-20px 0 40px rgba(0,0,0,0.6);transition:right .28s ease;z-index:90;padding:18px;overflow:auto}
+    #cartPanel.open{right:0}
+    #cartPanel h4{margin-top:0}
 
-        .nav-links a:hover {
-            background-color: #333;
-            transform: translateY(-2px);
-        }
+    /* toast */
+    #toast{position:fixed;left:50%;transform:translateX(-50%) translateY(120%);bottom:24px;background:#ffffff;color:#0f0f0f;padding:10px 16px;border-radius:12px;box-shadow:0 6px 30px rgba(0,0,0,0.5);transition:transform .28s ease,opacity .28s ease;opacity:0;z-index:110}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-        .join-btn {
-            background-color: #ffffff;
-            color: #121212;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    /* responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .hero-aside{order:2}
+      .modal .panel{grid-template-columns:1fr}
+      .img{height:140px}
+      #cartPanel{width:100%;right:-100%}
+      #cartPanel.open{right:0}
+    }
 
-        .join-btn:hover {
-            transform: translateY(-3px);
-            background-color: #f0f0f0;
-            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
-            padding: 6rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #ffffff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-            to { text-shadow: 0 0 30px rgba(255,255,255,0.6); }
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-btn {
-            background-color: #ffffff;
-            color: #121212;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0 10px;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            background-color: #f0f0f0;
-            box-shadow: 0 6px 20px rgba(255,255,255,0.4);
-        }
-
-        .cta-btn.secondary {
-            background-color: transparent;
-            color: #ffffff;
-            border: 2px solid #ffffff;
-        }
-
-        .cta-btn.secondary:hover {
-            background-color: #ffffff;
-            color: #121212;
-        }
-
-        /* About Section */
-        .about {
-            padding: 6rem 0;
-            background-color: #1e1e1e;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 3rem;
-            color: #ffffff;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .about-text {
-            font-size: 1.2rem;
-            line-height: 1.8;
-        }
-
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-
-        .stat-card {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            border: 1px solid #333;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px);
-            border-color: #555;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #ccc;
-            font-size: 1.1rem;
-        }
-
-        /* Members Section */
-        .members {
-            padding: 6rem 0;
-            background-color: #121212;
-        }
-
-        .members-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .member-card {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid #333;
-        }
-
-        .member-card:hover {
-            transform: translateY(-10px);
-            border-color: #555;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .member-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #333, #555);
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #ffffff;
-        }
-
-        .member-name {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-
-        .member-role {
-            color: #ccc;
-            margin-bottom: 1rem;
-        }
-
-        .member-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 1rem;
-        }
-
-        .member-stat {
-            text-align: center;
-        }
-
-        .member-stat-value {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #ffffff;
-        }
-
-        .member-stat-label {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-
-        /* Rules Section */
-        .rules {
-            padding: 6rem 0;
-            background-color: #1e1e1e;
-        }
-
-        .rules-list {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .rule-item {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #333;
-            transition: all 0.3s ease;
-        }
-
-        .rule-item:hover {
-            border-color: #555;
-            transform: translateX(10px);
-        }
-
-        .rule-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Join Section */
-        .join-section {
-            padding: 6rem 0;
-            background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
-            text-align: center;
-        }
-
-        .requirements {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .requirement-card {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 15px;
-            padding: 2rem;
-            border: 1px solid #333;
-            transition: all 0.3s ease;
-        }
-
-        .requirement-card:hover {
-            transform: translateY(-5px);
-            border-color: #555;
-        }
-
-        .requirement-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #0d0d0d;
-            padding: 3rem 0 1rem;
-            text-align: center;
-            border-top: 1px solid #333;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            color: #ffffff;
-            margin-bottom: 1rem;
-        }
-
-        .footer-section a {
-            color: #ccc;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: #ffffff;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #333;
-            padding-top: 1rem;
-            color: #ccc;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.2rem;
-            }
-            
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .about-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .members-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .cta-btn {
-                display: block;
-                margin: 10px 0;
-                width: 100%;
-                max-width: 300px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-    </style>
+    /* age gate */
+    .agegate{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.95);z-index:200}
+    .agegate .box{background:var(--card);padding:28px;border-radius:12px;text-align:center;max-width:420px;color:#ffffff;box-shadow:var(--shadow)}
+    .agegate button{margin:10px;padding:12px 16px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;cursor:pointer}
+  </style>
 </head>
 <body>
-    <svg class="background-animation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
-        <defs>
-            <linearGradient id="dark-gradient" gradientTransform="rotate(0.5)">
-                <stop offset="0.15" stop-color="#ffffff" stop-opacity="0.1"/>
-                <stop offset="0.67" stop-color="#cccccc" stop-opacity="0.05"/>
-                <stop offset="1" stop-color="#888888" stop-opacity="0.02"/>
-                <animateTransform attributeName="gradientTransform" type="rotate" values="0 0.5 0.5; -360 0.5 0.5;" dur="180s" repeatCount="indefinite"/>
-            </linearGradient>
-        </defs>
-        <g transform="translate(-10 230)">
-            <rect x="748" y="363.5" width="120" height="120" rx="24" ry="24" fill="url(#dark-gradient)" fill-opacity="0.3"
-                  transform="rotate(-439) scale(6.8)" transform-origin="805px 455.5px">
-                <animateTransform attributeName="transform" type="rotate"
-                                  values="0 3 -32;360 3 -32;" dur="180s"
-                                  repeatCount="indefinite" additive="sum"/>
-            </rect>
-        </g>
-    </svg>
+  <!-- Age verification overlay -->
+  <div id="agegate" class="agegate" aria-hidden="false" role="dialog" aria-labelledby="age-title">
+    <div class="box">
+      <h2 id="age-title">Подтвердите возраст</h2>
+      <p style="color:var(--muted)">Сайт содержит товары только для взрослых. Подтвердите, что вам 18 лет или больше.</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:12px">
+        <button id="acceptBtn">Мне 18+</button>
+        <button id="declineBtn">Покинуть сайт</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- SITE (will be blurred until age accepted) -->
+  <div id="site">
     <header>
-        <div class="container">
-            <nav>
-                <a href="#" class="logo">Amoral Killers</a>
-                <ul class="nav-links">
-                    <li><a href="#home">Главная</a></li>
-                    <li><a href="#about">О клане</a></li>
-                    <li><a href="#members">Участники</a></li>
-                    <li><a href="#rules">Правила</a></li>
-                    <li><a href="#join">Вступить</a></li>
-                </ul>
-                <button class="mobile-menu-btn">☰</button>
-                <button class="join-btn">Присоединиться</button>
-            </nav>
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <h1>Velvet</h1>
+          <div style="font-size:12px;color:var(--muted)">Деликатные товары для взрослых • Конфиденциальная доставка</div>
         </div>
+      </div>
+      <nav>
+        <div class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="q" placeholder="Поиск: вибраторы, смазки, белье..." aria-label="Поиск товаров" />
+        </div>
+        <button class="pill" id="wishlistBtn">Избранное</button>
+        <button class="pill" id="cartBtn">Корзина</button>
+      </nav>
     </header>
 
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="hero-content">
-                <h1>AMORAL KILLERS</h1>
-                <p>Элитный клан беспощадных воинов. Мы готовы уничтожить каждого, кто встанет на нашем пути к победе.</p>
-                <button class="cta-btn">Присоединиться к клану</button>
-                <button class="cta-btn secondary">Узнать больше</button>
-            </div>
+    <main>
+      <section class="hero">
+        <div class="hero-card">
+          <div class="kicker">Новый</div>
+          <h2 class="headline">Качественные товары с деликатной подачей</h2>
+          <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция. Курьерская или почтовая доставка.</p>
+          <div style="display:flex;gap:12px">
+            <a class="cta" href="catalog.html">К каталогу</a>
+            <button class="cta secondary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Связаться с нами</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
+            <div class="pill">Доставка по Украине</div>
+            <div class="pill">Анонимная упаковка</div>
+          </div>
         </div>
+
+        <aside class="hero-aside">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong>Быстрые фильтры</strong>
+            <small style="color:var(--muted)">Подберите быстро</small>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="pill" onclick="applyFilter('vibrators')">Вибраторы</button>
+            <button class="pill" onclick="applyFilter('lube')">Смазки</button>
+            <button class="pill" onclick="applyFilter('lingerie')">Белье</button>
+            <button class="pill" onclick="applyFilter('couples')">Для пар</button>
+          </div>
+        </aside>
+      </section>
+
+  <main>
+    <section id="catalog">
+      <div class="filters">
+        <select id="sort" onchange="renderProducts()">
+          <option value="popular">Популярные</option>
+          <option value="new">Новые</option>
+          <option value="price-asc">Цена: по возрастанию</option>
+          <option value="price-desc">Цена: по убыванию</option>
+        </select>
+        <div style="margin-left:auto;color:var(--muted)">Показано <span id="count">0</span> товаров</div>
+      </div>
+
+      <div id="grid" class="grid" aria-live="polite"></div>
     </section>
+  </main>
 
-    <section class="about" id="about">
-        <div class="container">
-            <h2 class="section-title">О нашем клане</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>Amoral Killers — это не просто клан, это братство воинов, объединенных одной целью: доминировать на поле боя. Мы не знаем пощады к врагам и никогда не отступаем перед лицом опасности.</p>
-                    <p>Наша философия проста: побеждать любой ценой. Каждый участник клана — это отточенное оружие, готовое к бою в любой момент. Мы тренируемся каждый день, совершенствуя свои навыки и тактики.</p>
-                    <p>Присоединяйся к нам, если готов стать частью легенды и написать свое имя кровью врагов на страницах истории.</p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">20+</div>
-                        <div class="stat-label">Лучших участников</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">90%</div>
-                        <div class="stat-label">Процент побед</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">ебатькакмногоK+</div>
-                        <div class="stat-label">Уничтожено врагов</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">#1</div>
-                        <div class="stat-label">В рейтинге кланов</div>
-                    </div>
-                </div>
-            </div>
+  <!-- Modal -->
+  <div id="modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="panel">
+      <div style="padding:6px">
+        <div class="img" id="modal-img"></div>
+        <div style="margin-top:10px;color:var(--muted);font-size:13px">Гарантия конфиденциальности • Безопасные материалы</div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <h3 id="modal-title"></h3>
+            <div id="modal-meta" class="meta"></div>
+          </div>
+          <button class="close" onclick="closeModal()">✕</button>
         </div>
-    </section>
-
-    <section class="members" id="members">
-        <div class="container">
-            <h2 class="section-title">Наши лидеры</h2>
-            <div class="members-grid">
-                <div class="member-card">
-                    <div class="member-avatar">👑</div>
-                    <h3 class="member-name">такихада</h3>
-                    <p class="member-role">Лидер клана</p>
-                    <div class="member-stats">
-                        <div class="member-stat">
-                            <div class="member-stat-value">много</div>
-                            <div class="member-stat-label">Килов</div>
-                        </div>
-                        <div class="member-stat">
-                            <div class="member-stat-value">95%</div>
-                            <div class="member-stat-label">Винрейт</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <p style="margin-top:12px;color:var(--muted)" id="modal-desc"></p>
+        <div style="display:flex;gap:12px;margin-top:18px">
+          <div class="price" id="modal-price"></div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn" id="modalAdd">В корзину</button>
+            <button class="btn ghost" id="modalWishlist">♡ Избранное</button>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <section class="rules" id="rules">
-        <div class="container">
-            <h2 class="section-title">Правила клана</h2>
-            <div class="rules-list">
-                <div class="rule-item">
-                    <div class="rule-number">01</div>
-                    <p>Приписка клана - "АК", ее ставить обязательно</p>
-                </div>
-                <div class="rule-item">
-                    <div class="rule-number">02</div>
-                    <p>Оскорбление соклана - кик + позор</p>
-                </div>
-                <div class="rule-item">
-                    <div class="rule-number">03</div>
-                    <p>Уважай старших или позор клана</p>
-                </div>
-                <div class="rule-item">
-                    <div class="rule-number">04</div>
-                    <p>Постишь рекламу без разрешения - кик + позор клана</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Mini Contact Bar -->
+<section style="background:var(--card);padding:16px 32px;border-radius:12px;margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center">
+  <div style="display:flex;align-items:center;gap:8px">
+    <strong>Сделать идивидуальный заказ: </strong>
+  </div>
+  <a href="https://t.me/onedeza" target="_blank" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Telegram</a>
+  <a href="tel:+380970176014" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Телефон</a>
+  <a href="mailto:developerdeza@gmail.com" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Email</a>
+</section>
 
-    <section class="join-section" id="join">
-        <div class="container">
-            <h2 class="section-title">Готов присоединиться?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Не каждый способен стать частью Amoral Killers. Проверь себя на соответствие нашим требованиям.</p>
-            
-            <div class="requirements">
-                <div class="requirement-card">
-                    <div class="requirement-icon">💀</div>
-                    <h3>Опыт в км</h3>
-                    <p>Минимальные навыки осинта, маняосинтеры нам не нужны</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">🎯</div>
-                    <h3>Быстродействие</h3>
-                    <p>Когда глава постит линк на кф нужно заходить и ебашить</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">🤝</div>
-                    <h3>Касты</h3>
-                    <p>Основа: Осинт, Сват, Снос, Код, Тролл</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">⚡</div>
-                    <h3>Активность</h3>
-                    <p>Неактив 3+ дня - нахуй из клана, нам сиделки не нужны</p>
-                </div>
-            </div>
-            
-            <button class="cta-btn" href="https://t.me/amoral_killers">Подать заявку в клан</button>
-        </div>
-    </section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Контакты</h3>
-                    <a href="#">Telegram: @amoral_killers</a>
-                    <a href="#">Telegram Perexodnik: @amoral_killers</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Ресурсы</h3>
-                    <a href="#">Статистика клана</a>
-                    <a href="#">Гайды на все</a>
-                    <a href="#">Архив вьебов</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Amoral Killers. Все права защищены смертью.</p>
-            </div>
-        </div>
-    </footer>
+<script>
+const products = [
+  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов, силикон medical-grade',desc:'Водонепроницаемый, 8 режимов, зарядка USB.',image:'images/v1.jpg'},
+  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная, на водной основе',desc:'Подходит для использования с игрушками и презервативами.',image:'images/c1.jpg'},
+  {id:3,title:'Lace Whisper — Комплект белья',category:'lingerie',price:59,short:'Эластичный, нежный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'},
+  {id:4,title:'Together Set — Для пар',category:'couples',price:89,short:'Игры для пары, 3 аксессуара',desc:'Идеально для исследования близости вместе.',image:'images/bdsm1.jpg'},
+  {id:5,title:'Mini Pulse — Мини-вибратор',category:'vibrators',price:39,short:'Компактный, тихий',desc:'Прекрасно для путешествий.',image:'images/v2.jpg'},
+  {id:6,title:'BunnyHop — Вибратор-кролик',category:'vibrators',price:149,short:'Двойная стимуляция',desc:'Мощные моторчики для точки G и клитора.',image:'images/v3.jpg'},
+  {id:7,title:'Crystal Dildo — Стеклянный',category:'dildos',price:49,short:'Эстетика и твёрдость',desc:'Можно нагревать или охлаждать для новых ощущений.',image:'images/d1.jpg'},
+  {id:8,title:'Leather Erotic Gear Set',category:'bdsm',price:79,short:'Набор аксессуаров из кожи',desc:'Плётка, маска, наручники и другое.',image:'images/bdsm2.jpg'},
+  {id:9,title:'Stemless — Анальные бусы',category:'anal',price:29,short:'Мягкий силикон, тройные шарики',desc:'Удобно снимать и мыть.',image:'images/bysu1.jpg'},
+  {id:10,title:'Desire Boost — Возбуждающий спрей',category:'cosmetics',price:25,short:'Для женщин и мужчин',desc:'Быстрый эффект, приятный аромат.',image:'images/spray.jpg'}
+];
 
-    <script>
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
+const grid = document.getElementById('grid');
+const count = document.getElementById('count');
+const modal = document.getElementById('modal');
+let currentProductId = null;
+let wishlist = new Set(JSON.parse(localStorage.getItem('wishlist')||'[]'));
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
 
-        // Join buttons functionality
-        const joinBtns = document.querySelectorAll('.join-btn, .cta-btn');
-        joinBtns.forEach(btn => {
-            if (btn.textContent.includes('Присоединиться') || btn.textContent.includes('Подать заявку')) {
-                btn.addEventListener('click', function() {
-                    alert('Свяжитесь с нами через Discord или Telegram для подачи заявки!');
-                });
-            }
-        });
+function saveState(){ localStorage.setItem('wishlist',JSON.stringify([...wishlist])); localStorage.setItem('cart',JSON.stringify(cart)); }
 
-        // CTA button scroll functionality
-        document.querySelectorAll('.cta-btn').forEach(btn => {
-            if (btn.textContent.includes('Узнать больше')) {
-                btn.addEventListener('click', function() {
-                    document.querySelector('#about').scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            }
-        });
+function renderProducts(filter){
+  const q = (document.getElementById('q')?.value||'').toLowerCase();
+  const sort = document.getElementById('sort')?.value;
+  let list = products.slice();
+  if(filter) list = list.filter(p=>p.category===filter);
+  if(q) list = list.filter(p=>p.title.toLowerCase().includes(q)||p.short.toLowerCase().includes(q));
+  if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+  if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+  grid.innerHTML = '';
+  list.forEach(p=>{
+    const el = document.createElement('article'); el.className='card';
+    el.innerHTML = `
+      <div class="img">
+        <img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" />
+      </div>
+      <div class="product-title">${p.title}</div>
+      <div class="meta">${p.short}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+        <div class="price">${p.price}$</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="openModal(${p.id})">Быстрый просмотр</button>
+        <button class="btn ghost" onclick="toggleWishlist(${p.id})">${wishlist.has(p.id)?'♥ В избранном':'♡'}</button>
+      </div>
+    `;
+    grid.appendChild(el);
+  });
+  count.textContent = list.length;
+}
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
-        
-        mobileMenuBtn.addEventListener('click', function() {
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '100%';
-                navLinks.style.left = '0';
-                navLinks.style.right = '0';
-                navLinks.style.backgroundColor = '#1e1e1e';
-                navLinks.style.padding = '1rem';
-                navLinks.style.borderTop = '1px solid #333';
-            }
-        });
+function openModal(id){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  currentProductId = id;
+  document.getElementById('modal-title').textContent = p.title;
+  document.getElementById('modal-meta').textContent = p.short + ' • ' + p.category;
+  document.getElementById('modal-desc').textContent = p.desc;
+  document.getElementById('modal-price').textContent = p.price+'$';
+  document.getElementById('modal-img').innerHTML = `<img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" />`;
+  document.getElementById('modalAdd').onclick = ()=>addToCart(currentProductId);
+  document.getElementById('modalWishlist').onclick = ()=>toggleWishlist(currentProductId);
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
 
-        // Header background change on scroll
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('header');
-            if (window.scrollY > 50) {
-                header.style.backgroundColor = '#1a1a1a';
-            } else {
-                header.style.backgroundColor = '#1e1e1e';
-            }
-        });
 
-        // Animate stats on scroll
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px 0px -50px 0px'
-        };
+document.addEventListener('DOMContentLoaded', () => {
+  // всегда показываем agegate
+  site.classList.add('blurred');
+  agegate.style.display = 'grid';
+});
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'glow 2s ease-in-out infinite alternate';
-                }
-            });
-        }, observerOptions);
+document.getElementById('acceptBtn').onclick = () => {
+  site.classList.remove('blurred');
+  agegate.style.display = 'none';
+};
 
-        document.querySelectorAll('.stat-card, .member-card').forEach(card => {
-            observer.observe(card);
-        });
-    </script>
+document.getElementById('declineBtn').onclick = () => {
+  window.location.href = 'https://www.google.com';
+};
+
+
+function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); currentProductId=null; }
+
+function addToCart(id){ if(!id) id=currentProductId; if(!id) return; cart.push(id); saveState(); }
+
+function toggleWishlist(id){
+  if(!id) return;
+  if(wishlist.has(id)) wishlist.delete(id); else wishlist.add(id);
+  saveState(); renderProducts();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ renderProducts(); });
+
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+</script>
 </body>
 </html>
