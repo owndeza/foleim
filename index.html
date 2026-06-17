@@ -1,366 +1,138 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Прости меня ❤️</title>
 
-  <script>
-    // Проверяем ширину окна при загрузке страницы
-    window.addEventListener('load', function() {
-      if (window.innerWidth < 765) {
-        window.location.href = 'indexm.html';
-      }
-    });
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    // Дополнительно можно проверять изменение размера окна
-    window.addEventListener('resize', function() {
-      if (window.innerWidth < 765) {
-        window.location.href = 'indexm.html';
-      }
-    });
-  </script>
+body{
+    overflow:hidden;
+    background:linear-gradient(to bottom,#ffb6d9,#ffd6eb);
+    height:100vh;
+    font-family:Arial,sans-serif;
+    cursor:pointer;
+}
 
-  <title>Velvet</title>
-  <meta name="description" content="Современный и деликатный сексшоп — товары для взрослых, конфиденциальная доставка, консультации." />
-  <style>
-    :root{
-      --bg:#0f0f0f; --card:#1a1a1a; --muted:#cccccc; --accent:#ffffff; --accent-text:#0f0f0f; --glass: rgba(255,255,255,0.08);
-      --radius:14px; --shadow: 0 6px 30px rgba(0,0,0,0.6);
-      color-scheme: dark;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+.falling{
+    position:absolute;
+    top:-100px;
+    color:#ff1493;
+    font-weight:bold;
+    user-select:none;
+    pointer-events:none;
+    animation:fall linear forwards;
+    text-shadow:0 0 10px rgba(255,20,147,.5);
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-100px) rotate(0deg);
+        opacity:1;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--bg);color:#ffffff;overflow-x:hidden}
-    a{color:inherit;text-decoration:none}
-
-    /* blurred state while agegate active */
-    #site.blurred{filter:blur(6px) brightness(.6);pointer-events:none;user-select:none}
-
-    #site.blurred {
-  filter: blur(6px) brightness(.6);
-  pointer-events: none; /* только сайт, agegate поверх */
-}
-
-.agegate {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0,0,0,0.95);
-  z-index: 999; /* выше сайта */
-}
-.agegate .box button {
-  pointer-events: auto; /* чтобы кнопки работали */
-}
-
-
-    header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:48px;height:48px;border-radius:12px;background:var(--accent);display:grid;place-items:center;font-weight:700;color:var(--accent-text);box-shadow:0 6px 18px rgba(0,0,0,0.18)}
-    .brand h1{margin:0;font-size:18px;letter-spacing:0.2px}
-    nav{display:flex;gap:18px;align-items:center}
-    .search{display:flex;align-items:center;gap:8px;background:var(--glass);padding:8px 12px;border-radius:12px;min-width:260px}
-    .search input{background:transparent;border:0;outline:0;color:inherit;width:100%}
-    main{padding:12px 32px}
-    .hero {
-  display: grid;
-  grid-template-columns: 4fr 1fr; /* 80% и 20% */
-  gap: 28px;
-  align-items: start; /* чтобы карточки выравнивались по верху */
-  margin: 18px auto;
-  max-width: 1000px;
-}
-
-.hero-left {
-  /* дополнительные стили для левой карточки при необходимости */
-}
-
-.hero-right {
-  background: var(--card);
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-    .hero-card{background:var(--card);padding:28px;border-radius:18px;box-shadow:var(--shadow)}
-    .kicker{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-    .headline{font-size:34px;line-height:1.02;margin:0 0 12px}
-    .lead{color:var(--muted);margin-bottom:18px}
-    .cta{display:inline-flex;align-items:center;background:var(--accent);color:var(--accent-text);padding:12px 18px;border-radius:12px;font-weight:600;gap:10px;box-shadow:0 8px 30px rgba(255,255,255,0.12)}
-    .cta.secondary{background:var(--accent);color:var(--accent-text);border:0}
-    .hero-aside{background:var(--card);padding:18px;border-radius:12px}
-    .pill{display:inline-block;background:var(--accent);padding:8px 12px;border-radius:999px;color:var(--accent-text);font-size:13px;font-weight:600;cursor:pointer;border:0}
-
-    /* products grid */
-    .filters{display:flex;gap:12px;align-items:center;margin:18px 0}
-    .filters select,.filters button{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:var(--accent-text);font-weight:600;cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
-    .card{background:var(--card);padding:14px;border-radius:14px;box-shadow:var(--shadow);transition:transform .18s ease}
-    .card:hover{transform:translateY(-6px)}
-    .img{height:160px;border-radius:10px;background:#2a2a2a;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600}
-    .product-title{margin:10px 0 6px;font-weight:600}
-    .price{font-weight:700}
-    .meta{color:var(--muted);font-size:13px}
-    .actions{display:flex;gap:8px;margin-top:12px}
-    .btn{flex:1;padding:10px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;cursor:pointer}
-    .btn.ghost{background:var(--accent);color:var(--accent-text);border:0}
-
-    /* footer */
-    footer{margin-top:28px;padding:28px;border-radius:12px;background:var(--card);display:flex;justify-content:space-between;align-items:center}
-
-    /* modal */
-    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:80}
-    .modal.open{display:flex}
-    .modal .panel{width:min(920px,96%);background:var(--card);padding:20px;border-radius:12px;display:grid;grid-template-columns:420px 1fr;gap:18px}
-    .close{background:var(--accent);color:var(--accent-text);border:0;padding:6px 10px;border-radius:6px;font-weight:700;cursor:pointer}
-
-    /* cart panel */
-    #cartPanel{position:fixed;right:-420px;top:0;height:100vh;width:360px;background:var(--card);box-shadow:-20px 0 40px rgba(0,0,0,0.6);transition:right .28s ease;z-index:90;padding:18px;overflow:auto}
-    #cartPanel.open{right:0}
-    #cartPanel h4{margin-top:0}
-
-    /* toast */
-    #toast{position:fixed;left:50%;transform:translateX(-50%) translateY(120%);bottom:24px;background:#ffffff;color:#0f0f0f;padding:10px 16px;border-radius:12px;box-shadow:0 6px 30px rgba(0,0,0,0.5);transition:transform .28s ease,opacity .28s ease;opacity:0;z-index:110}
-    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-    /* responsive */
-    @media (max-width:900px){
-      .hero{grid-template-columns:1fr}
-      .hero-aside{order:2}
-      .modal .panel{grid-template-columns:1fr}
-      .img{height:140px}
-      #cartPanel{width:100%;right:-100%}
-      #cartPanel.open{right:0}
+    to{
+        transform:translateY(calc(100vh + 150px)) rotate(360deg);
+        opacity:.8;
     }
+}
 
-    /* age gate */
-    .agegate{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.95);z-index:200}
-    .agegate .box{background:var(--card);padding:28px;border-radius:12px;text-align:center;max-width:420px;color:#ffffff;box-shadow:var(--shadow)}
-    .agegate button{margin:10px;padding:12px 16px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-text);font-weight:600;cursor:pointer}
-  </style>
+.burst{
+    position:absolute;
+    color:#ff1493;
+    font-weight:bold;
+    pointer-events:none;
+    animation:explode 2s ease-out forwards;
+    text-shadow:0 0 10px rgba(255,20,147,.5);
+}
+
+@keyframes explode{
+    0%{
+        transform:translate(0,0) scale(1);
+        opacity:1;
+    }
+    100%{
+        transform:translate(var(--x), var(--y)) scale(1.5);
+        opacity:0;
+    }
+}
+
+.center-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:white;
+    font-size:48px;
+    font-weight:bold;
+    text-shadow:0 0 20px #ff1493;
+    z-index:10;
+    text-align:center;
+}
+</style>
 </head>
 <body>
-  <!-- Age verification overlay -->
-  <div id="agegate" class="agegate" aria-hidden="false" role="dialog" aria-labelledby="age-title">
-    <div class="box">
-      <h2 id="age-title">Подтвердите возраст</h2>
-      <p style="color:var(--muted)">Сайт содержит товары только для взрослых. Подтвердите, что вам 18 лет или больше.</p>
-      <div style="display:flex;gap:12px;justify-content:center;margin-top:12px">
-        <button id="acceptBtn">Мне 18+</button>
-        <button id="declineBtn">Покинуть сайт</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- SITE (will be blurred until age accepted) -->
-  <div id="site">
-    <header>
-      <div class="brand">
-        <div class="logo">V</div>
-        <div>
-          <h1>Velvet</h1>
-          <div style="font-size:12px;color:var(--muted)">Деликатные товары для взрослых • Конфиденциальная доставка</div>
-        </div>
-      </div>
-	        <aside class="hero-aside">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <strong>Быстрые фильтры</strong>
-            <small style="color:var(--muted)">Подберите быстро</small>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="pill" onclick="applyFilter('vibrators')">Вибраторы</button>
-            <button class="pill" onclick="applyFilter('lube')">Смазки</button>
-            <button class="pill" onclick="applyFilter('lingerie')">Белье</button>
-            <button class="pill" onclick="applyFilter('couples')">Для пар</button>
-          </div>
-        </aside>
-    </header>
-
-    <main>
-      <section class="hero">
-  <!-- Левая большая карточка -->
-  <div class="hero-card hero-left">
-    <div class="kicker">Новый</div>
-    <h2 class="headline">Качественные товары с деликатной подачей</h2>
-    <p class="lead">Приватная упаковка, медицинские материалы, сертифицированная продукция. Курьерская или почтовая доставка.</p>
-    <div style="display:flex;gap:12px">
-      <a class="cta" href="catalog.html">К каталогу</a>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:18px;align-items:center">
-      <div class="pill">Доставка по Украине</div>
-      <div class="pill">Анонимная упаковка</div>
-    </div>
-  </div>
-
-  <!-- Правая маленькая карточка -->
-  <div class="hero-card hero-right">
-    <div class="kicker">Скидка</div>
-    <h3 class="headline" style="font-size:24px">Только сегодня!</h3>
-    <p class="lead">Специальные предложения на ограниченный ассортимент товаров.</p>
-    <div style="display:flex;gap:12px">
-      <a class="cta secondary" href="catalog.html">Смотреть</a>
-    </div>
-  </div>
-</section>
-
-  <main>
-    <section id="catalog">
-      <div class="filters">
-        <select id="sort" onchange="renderProducts()">
-          <option value="popular">Популярные</option>
-          <option value="new">Новые</option>
-          <option value="price-asc">Цена: по возрастанию</option>
-          <option value="price-desc">Цена: по убыванию</option>
-        </select>
-        <div style="margin-left:auto;color:var(--muted)">Показано <span id="count">0</span> товаров</div>
-      </div>
-
-      <div id="grid" class="grid" aria-live="polite"></div>
-    </section>
-  </main>
-
-  <!-- Modal -->
-  <div id="modal" class="modal" role="dialog" aria-hidden="true">
-    <div class="panel">
-      <div style="padding:6px">
-        <div class="img" id="modal-img"></div>
-        <div style="margin-top:10px;color:var(--muted);font-size:13px">Гарантия конфиденциальности • Безопасные материалы</div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:start">
-          <div>
-            <h3 id="modal-title"></h3>
-            <div id="modal-meta" class="meta"></div>
-          </div>
-          <button class="close" onclick="closeModal()">✕</button>
-        </div>
-        <p style="margin-top:12px;color:var(--muted)" id="modal-desc"></p>
-        <div style="display:flex;gap:12px;margin-top:18px">
-          <div class="price" id="modal-price"></div>
-          <div style="margin-left:auto;display:flex;gap:8px">
-            <button class="btn ghost" id="modalWishlist">♡ Избранное</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mini Contact Bar -->
-<section style="background:var(--card);padding:16px 32px;border-radius:12px;margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center">
-  <div style="display:flex;align-items:center;gap:8px">
-    <strong>Сделать идивидуальный заказ: </strong>
-  </div>
-  <a href="https://t.me/onedeza" target="_blank" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Telegram</a>
-  <a href="tel:+380970176014" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Телефон</a>
-  <a href="mailto:developerdeza@gmail.com" style="background:var(--accent);color:var(--accent-text);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;">Email</a>
-</section>
+<div class="center-text">
+    прости меня киса
+</div>
 
 <script>
-// Функция для применения фильтра по категории
-function applyFilter(category){
-  renderProducts(category); // передаем категорию в renderProducts
+function createFalling() {
+    const el = document.createElement("div");
+    el.className = "falling";
+
+    el.textContent = Math.random() > 0.5 ? "❤️" : "прости меня";
+
+    el.style.left = Math.random() * window.innerWidth + "px";
+    el.style.fontSize = (20 + Math.random() * 25) + "px";
+
+    const duration = 4 + Math.random() * 6;
+    el.style.animationDuration = duration + "s";
+
+    document.body.appendChild(el);
+
+    setTimeout(() => {
+        el.remove();
+    }, duration * 1000);
 }
 
-// Если захочешь добавить поиск по тексту
-document.getElementById('q')?.addEventListener('input', () => renderProducts());
-</script>
+setInterval(createFalling, 150);
 
-<script>
-const products = [
-  {id:1,title:'Satin Touch — Вибратор',category:'vibrators',price:129,short:'Много режимов, силикон medical-grade',desc:'Водонепроницаемый, 8 режимов, зарядка USB.',image:'images/v1.jpg'},
-  {id:2,title:'Silk Lube — Смазка',category:'lube',price:9,short:'Гипоаллергенная, на водной основе',desc:'Подходит для использования с игрушками и презервативами.',image:'images/c1.jpg'},
-  {id:3,title:'Lace Whisper — Комплект белья',category:'lingerie',price:59,short:'Эластичный, нежный материал',desc:'Доступен в нескольких размерах.',image:'images/b1.jpg'},
-  {id:4,title:'Together Set — Для пар',category:'couples',price:89,short:'Игры для пары, 3 аксессуара',desc:'Идеально для исследования близости вместе.',image:'images/bdsm1.jpg'},
-  {id:5,title:'Mini Pulse — Мини-вибратор',category:'vibrators',price:39,short:'Компактный, тихий',desc:'Прекрасно для путешествий.',image:'images/v2.jpg'},
-  {id:6,title:'BunnyHop — Вибратор-кролик',category:'vibrators',price:149,short:'Двойная стимуляция',desc:'Мощные моторчики для точки G и клитора.',image:'images/v3.jpg'},
-  {id:7,title:'Crystal Dildo — Стеклянный',category:'dildos',price:49,short:'Эстетика и твёрдость',desc:'Можно нагревать или охлаждать для новых ощущений.',image:'images/d1.jpg'},
-  {id:8,title:'Leather Erotic Gear Set',category:'bdsm',price:79,short:'Набор аксессуаров из кожи',desc:'Плётка, маска, наручники и другое.',image:'images/bdsm2.jpg'},
-  {id:9,title:'Stemless — Анальные бусы',category:'anal',price:29,short:'Мягкий силикон, тройные шарики',desc:'Удобно снимать и мыть.',image:'images/bysu1.jpg'},
-  {id:10,title:'Desire Boost — Возбуждающий спрей',category:'cosmetics',price:25,short:'Для женщин и мужчин',desc:'Быстрый эффект, приятный аромат.',image:'images/spray.jpg'}
-];
+document.addEventListener("click", e => {
+    for(let i = 0; i < 60; i++) {
+        const el = document.createElement("div");
+        el.className = "burst";
 
-const grid = document.getElementById('grid');
-const count = document.getElementById('count');
-const modal = document.getElementById('modal');
-let currentProductId = null;
-let wishlist = new Set(JSON.parse(localStorage.getItem('wishlist')||'[]'));
-let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+        el.textContent = Math.random() > 0.5 ? "❤️" : "прости меня";
 
-function saveState(){ localStorage.setItem('wishlist',JSON.stringify([...wishlist])); localStorage.setItem('cart',JSON.stringify(cart)); }
+        el.style.left = e.clientX + "px";
+        el.style.top = e.clientY + "px";
 
-function renderProducts(filter){
-  const q = (document.getElementById('q')?.value||'').toLowerCase();
-  const sort = document.getElementById('sort')?.value;
-  let list = products.slice();
-  if(filter) list = list.filter(p=>p.category===filter);
-  if(q) list = list.filter(p=>p.title.toLowerCase().includes(q)||p.short.toLowerCase().includes(q));
-  if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
-  if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
-  grid.innerHTML = '';
-  list.forEach(p=>{
-    const el = document.createElement('article'); el.className='card';
-    el.innerHTML = `
-      <div class="img">
-        <img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" />
-      </div>
-      <div class="product-title">${p.title}</div>
-      <div class="meta">${p.short}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-        <div class="price">${p.price}$</div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="openModal(${p.id})">Быстрый просмотр</button>
-        <button class="btn ghost" onclick="toggleWishlist(${p.id})">${wishlist.has(p.id)?'♥ В избранном':'♡'}</button>
-      </div>
-    `;
-    grid.appendChild(el);
-  });
-  count.textContent = list.length;
-}
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 100 + Math.random() * 300;
 
-function openModal(id){
-  const p = products.find(x=>x.id===id);
-  if(!p) return;
-  currentProductId = id;
-  document.getElementById('modal-title').textContent = p.title;
-  document.getElementById('modal-meta').textContent = p.short + ' • ' + p.category;
-  document.getElementById('modal-desc').textContent = p.desc;
-  document.getElementById('modal-price').textContent = p.price+'$';
-  document.getElementById('modal-img').innerHTML = `<img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" />`;
-  document.getElementById('modalAdd').onclick = ()=>addToCart(currentProductId);
-  document.getElementById('modalWishlist').onclick = ()=>toggleWishlist(currentProductId);
-  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
-}
+        const x = Math.cos(angle) * distance + "px";
+        const y = Math.sin(angle) * distance + "px";
 
+        el.style.setProperty("--x", x);
+        el.style.setProperty("--y", y);
 
-document.addEventListener('DOMContentLoaded', () => {
-  // всегда показываем agegate
-  site.classList.add('blurred');
-  agegate.style.display = 'grid';
+        el.style.fontSize = (18 + Math.random() * 20) + "px";
+
+        document.body.appendChild(el);
+
+        setTimeout(() => {
+            el.remove();
+        }, 2000);
+    }
 });
-
-document.getElementById('acceptBtn').onclick = () => {
-  site.classList.remove('blurred');
-  agegate.style.display = 'none';
-};
-
-document.getElementById('declineBtn').onclick = () => {
-  window.location.href = 'https://www.google.com';
-};
-
-
-function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); currentProductId=null; }
-
-function addToCart(id){ if(!id) id=currentProductId; if(!id) return; cart.push(id); saveState(); }
-
-function toggleWishlist(id){
-  if(!id) return;
-  if(wishlist.has(id)) wishlist.delete(id); else wishlist.add(id);
-  saveState(); renderProducts();
-}
-
-document.addEventListener('DOMContentLoaded',()=>{ renderProducts(); });
-
-modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
 </script>
+
 </body>
 </html>
